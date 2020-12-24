@@ -1,0 +1,19 @@
+Script needs to create a workspace in the current and subsequent directories if the workspace doesn't exist
+
+Input from user:
+region <-- to be used as workspace name
+
+Steps:
+
+1. Take the region name as a flag
+2. List the workspaces
+3. Check if workspace<region> is already created, set boolean flag
+4. Check flag:
+    4a.True:
+      terraform workspace select <workspace>
+      cd into subsequent directories and select the workspace
+    4b.False:
+      terraform workspace new <workspace>
+      cd into subsequent directories and create the workspace
+4. Modify terragrunt.hcl file to set the local.aws_region
+
