@@ -36,5 +36,5 @@ then
 fi
 
 # Set region in terragrunt file
-hclq set 'locals.aws_region' "$region" < "terragrunt.hcl"
+hclq set 'locals.aws_region' "$region" < terragrunt.hcl | sponge terragrunt.hcl
 
