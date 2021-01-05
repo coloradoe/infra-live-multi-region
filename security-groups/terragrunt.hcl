@@ -3,7 +3,7 @@ include {
 }
 
 terraform {
-   source = "git::git@github.com:coloradoe/coloradoe-infra-modules-multi-region.git?ref=v0.0.2"
+   source = "git::git@github.com:coloradoe/coloradoe-infra-modules-multi-region.git?ref=v0.0.1"
 }
 
 dependencies {
