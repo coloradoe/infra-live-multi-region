@@ -28,8 +28,8 @@ Regions will be vertical, meaning they will exist within an environment through 
 9. The user will go to the root folder for the environment they are working in
 10. The user will run terraworkspace.sh with the region flag (-r) and the region in which they want to provision their resources (ex. us-east-1)
 11. If the user needs to provision the entire infrastructure they will run terragrunt plan-all
-    a. If the user only needs to provision a particular module they will go into that folder and run terragrunt plan
+    * If the user only needs to provision a particular module they will go into that folder and run terragrunt plan
 12. The user will verify the changes to add/modify in the infrastructure
 13. If the user is provisioning the entire infrastructure they will run terragrunt apply-all
-    a. If the user is provisioning a particular module, they will go into that folder and run terragrunt apply
+    * If the user is provisioning a particular module, they will go into that folder and run terragrunt apply
 14. Profit
