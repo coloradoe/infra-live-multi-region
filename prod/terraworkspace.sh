@@ -22,6 +22,7 @@ do
        region=${OPTARG}
        array=()
 
+       # Get current workspace list
        for i in $(terraform workspace list| sed 's/*//g')
        do
            array+=("$i")
@@ -29,6 +30,13 @@ do
        done
        echo "exiting"
 
+       for j in */;
+       do(
+           echo $j
+           );
+       done
+
+       # Check if desired region is in the list of workspaces gathered above, if not, create it
        if [[ ! " ${array[*]} " =~ " $region " ]];
        then
            echo "Creating $region"
@@ -46,6 +54,7 @@ do
            cd "$d" && terraform workspace new "$region"); done
        fi
 
+       # If workspace exists on that list then select it
        if [[ " ${array[*]} " =~ " $region " ]];
        then
            echo "Selecting $region"
