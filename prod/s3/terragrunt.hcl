@@ -10,10 +10,10 @@ include {
   path = find_in_parent_folders()
 }
 terraform {
-  source = "git::git@github.com:coloradoe/coloradoe-infra-modules-multi-region.git//s3?ref=v0.0.10"
+  source = "git::git@github.com:coloradoe/coloradoe-infra-modules-multi-region.git//s3?ref=v0.0.12"
 }
 inputs = {
-  bucket_name = "rdp-sample-bucket-${local.aws_region}"
-  environment_tag = "SampleEnv"
+  bucket_name = "rdp-488-sample-bucket-${local.aws_region}"
+  environment_tag = "Production"
   workspace = "${local.aws_region}"
 }
