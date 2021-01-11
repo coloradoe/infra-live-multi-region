@@ -13,7 +13,7 @@ terraform {
   source = "git::git@github.com:coloradoe/coloradoe-infra-modules-multi-region.git//s3?ref=v0.0.12"
 }
 inputs = {
-  bucket_name = "rdp-488-sample-bucket-${local.aws_region}"
+  bucket_name = "rdp-488-sample-bucket"
   environment_tag = "Production"
   workspace = "${local.aws_region}"
 }
