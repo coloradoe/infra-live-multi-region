@@ -1,89 +1,60 @@
 #!/bin/bash
-usage() {
-cat << EOF
-usage: bash ./terraworkspace.sh -r workspace_name
--r    | --workspace_name (Required)  Workspace name must match [us-east-1| us-east-2| us-west-1 | us-west-2]
--h    | --help                       Brings up this menu
-EOF
-}
-#
-# Display the usage message if no arguments are supplied
-#
-if [ $# -eq 0 ]
-then
-    usage
-    exit
-fi
 
 while getopts r:h:*: flag
 do
-    case "${flag}" in
-    r)
-       region=${OPTARG}
-       array=()
+   case "${flag}" in
+      r)
+         region=${OPTARG}
+         array=()
+         array1=()
 
-       # Get current workspace list
-       for i in $(terraform workspace list| sed 's/*//g')
-       do
-           array+=("$i")
-           echo "array[$i]"
-       done
-       echo "exiting"
+         for i in $(terraform workspace list| sed 's/*//g');
+         do
+            array+=("$i")
+            echo "array[$i]"
+         done
 
-       for j in */;
-       do(
-           echo $j
-           );
-       done
+         if [[ ! " ${array[*]} " =~ " $region " ]];
+         then
+            echo "create from root"
+            terraform workspace new $region
+         fi
+         if [[ " ${array[*]} " =~ " $region " ]];
+         then
+            echo "select from root"
+            terraform workspace select $region
+         fi
 
-       # Check if desired region is in the list of workspaces gathered above, if not, create it
-       if [[ ! " ${array[*]} " =~ " $region " ]];
-       then
-           echo "Creating $region"
-           # Create workspace if workspace doesn't exist
-           terraform workspace new "$region"
-           # Create workspace in all subdirectories
-           #for d in ./*/ ; do (cd "$d" && terraform workspace new "$region");done
-           for d in */;
-           do(
-               # ignore terra dirs and hidden dirs/files
-               if [[ "$d" == *"terra"* ]] || [[ "$d" =~ ^\. ]]; then
-                   continue
-               fi
-           # Create workspace in each module directory
-           cd "$d" && terraform workspace new "$region"); done
-       fi
+         for j in */;
+         do(
+            if [[ "$j" == *"terra"* ]] || [[ "$j" =~ ^\. ]]; then
+               continue
+            fi
+            echo "$j"
+            cd $j
+            pwd
+            for k in $(terraform workspace list| sed 's/*//g');
+            do
+               array1+=("$k")
+               echo "array1[$k]"
+            done
 
-       # If workspace exists on that list then select it
-       if [[ " ${array[*]} " =~ " $region " ]];
-       then
-           echo "Selecting $region"
-           # Select the workspace
-           terraform workspace select "$region"
-           # Select workspace in all subdirectories
-           #for d in ./*/ ; do (cd "$d" && terraform workspace select "$region");done
-           for d in */;
-            do(
-                # ignore terra dirs and hidden dirs/files
-                if [[ "$d" == *"terra"* ]] || [[ "$d" =~ ^\. ]]; then
-                    continue
-                fi
-            # Select workspace in each module directory
-            cd "$d" && terraform workspace select "$region"); done
-       fi
+            if [[ ! " ${array1[*]} " =~ " $region " ]];
+            then
+               terraform workspace new $region
+            fi
+            if [[ " ${array1[*]} " =~ " $region " ]];
+            then
+               terraform workspace select $region
+            fi
+            cd ../
+            pwd
+         );done
 
-       # Set region in terragrunt file
-       hclq set 'locals.aws_region' "$region" < terragrunt.hcl | sponge terragrunt.hcl
-       printf "Region Set to:\n"
-       hclq get 'locals.aws_region' < terragrunt.hcl
-       ;;
-    h)
-       echo "h stage"
-       ;;
-    *)
-       usage
-       exit
-       ;;
+         # Set region in terragrunt file
+         hclq set 'locals.aws_region' "$region" < terragrunt.hcl | sponge terragrunt.hcl
+         printf "Region Set to:\n"
+         hclq get 'locals.aws_region' < terragrunt.hcl
+         ;;
 esac
 done
-
